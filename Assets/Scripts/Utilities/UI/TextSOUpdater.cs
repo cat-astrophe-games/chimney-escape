@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class TextSOUpdater<T> : MonoBehaviour where T : IComparable<T>, IEquatable<T>
 {
     [SerializeField] protected BaseTypeValue<T> value;
 
-    [SerializeField] protected Text text;
+    [SerializeField] protected TextMeshProUGUI text;
     [SerializeField] protected string prefix, suffix;
 
     [Tooltip("optional feeding back to value")]
-    [SerializeField] private InputField inputText;
+    [SerializeField] private TMP_InputField inputText;
 
     protected virtual void Start()
     {
@@ -58,6 +59,6 @@ public class TextSOUpdater<T> : MonoBehaviour where T : IComparable<T>, IEquatab
 
     protected virtual void OnValidate()
     {
-        if (!text) text = GetComponent<Text>();
+        if (!text) text = GetComponent<TextMeshProUGUI>();
     }
 }

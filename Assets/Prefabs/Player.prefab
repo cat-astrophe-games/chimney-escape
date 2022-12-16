@@ -186,7 +186,7 @@ MonoBehaviour:
   rb: {fileID: 5622413709801764396}
   isOnGround: 0
   canJump: 1
-  maxPlatformReached: 0
+  maxPlatformReached: {fileID: 11400000, guid: e83744af4ffdab4419024982a0018bee, type: 2}
   controlEnabled: 1
 --- !u!65 &5622413709801764402
 BoxCollider:

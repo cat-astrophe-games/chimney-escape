@@ -14,8 +14,7 @@ public class PlayerController : MonoBehaviour
     public bool isOnGround, canJump = true;
 
     [SerializeField]
-    [ReadOnly]
-    private int maxPlatformReached;
+    private IntValue maxPlatformReached;
 
     [ReadOnly]
     public bool controlEnabled = true;
@@ -27,8 +26,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(isOnGround)
-            maxPlatformReached = Mathf.Max(maxPlatformReached, Mathf.RoundToInt(transform.position.y / 3f));
+        if(isOnGround && canJump)
+            maxPlatformReached.SetValue(Mathf.Max(maxPlatformReached, Mathf.RoundToInt(transform.position.y / 3f)));
         if (rb.velocity.y > 0)
             canJump = false;
     }
