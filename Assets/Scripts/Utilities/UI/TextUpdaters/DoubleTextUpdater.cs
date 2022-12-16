@@ -1,0 +1,1 @@
+public class DoubleTextUpdater : TextSOUpdater<double> { }
