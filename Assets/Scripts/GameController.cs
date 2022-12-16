@@ -7,20 +7,21 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private FloatValue minimumHeight;
     [SerializeField]
-    private IntValue score, floor;
+    private IntValue score, floor, bestJump;
     [SerializeField]
     private PlayerController player;
     [SerializeField]
     private float baseDeathClockSpeed, maxDeathClockSpeed;
     [SerializeField]
     private int maxDeathClockFloor;
-
-    private bool deathMarch;
+    [SerializeField]
+    private GameObject endScreen;
 
     private void Start()
     {
         floor.SetValue(0);
         score.SetValue(0);
+        bestJump.SetValue(0);
         floor.OnValueChanged.AddListener(UpdateScore);
     }
 
@@ -31,6 +32,7 @@ public class GameController : MonoBehaviour
             // trigger end of game
             player.controlEnabled = false;
             player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            endScreen.SetActive(true);
         }
         minimumHeight.SetValue(minimumHeight + GetDeathClockSpeed() * Time.deltaTime);
     }
@@ -48,5 +50,6 @@ public class GameController : MonoBehaviour
         var diff = newFloor - lastFloor;
         score.SetValue(score + diff * diff * Mathf.Max(1, newFloor / 10));
         lastFloor = newFloor;
+        bestJump.SetValue(Mathf.Max(bestJump, diff));
     }
 }

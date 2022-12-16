@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] 
     private Rigidbody rb;
+    [SerializeField]
+    private Animator animator;
 
     [ReadOnly]
     public bool isOnGround, canJump = true;
@@ -22,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
+        animator.enabled = false;
     }
 
     private void Update()
@@ -61,8 +64,10 @@ public class PlayerController : MonoBehaviour
         velocity.x = Mathf.Min(velocity.x, maxHorizontalVelocity);
         if(vertical > 0 && isOnGround && velocity.y <= 0 && canJump)
         {
+            animator.enabled = true;
+            animator.Play("Armature_ArmatureAction");
             velocity.y = Mathf.Max(velocity.x, minJumpVelocity);
-            isOnGround = false;
+            isOnGround = canJump = false;
         }
         rb.velocity = velocity;
     }

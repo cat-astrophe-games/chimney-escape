@@ -42,7 +42,8 @@ public class PlatformGenerator : MonoBehaviour
             var playerHeight = player.GetMaxRoundedPlatformPosition();
             if (playerHeight > 4)
                 minimumHeight.SetValue(Mathf.Max(minimumHeight, (playerHeight - 4) * platformDistance));
-            while (playerHeight + 5 > platformsGenerated)
+            var currPos = player.GetCurrentPlatformPosition();
+            while (currPos + 5 > platformsGenerated)
                 Generate();
 
             updateTimer -= .25f;
