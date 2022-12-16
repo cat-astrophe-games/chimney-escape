@@ -65,7 +65,8 @@ public class PlayerController : MonoBehaviour
         if(vertical > 0 && isOnGround && velocity.y <= 0 && canJump)
         {
             animator.enabled = true;
-            animator.Play("Armature_ArmatureAction");
+            animator.Play("Jump");
+            //animator.StartPlayback();
             velocity.y = Mathf.Max(velocity.x, minJumpVelocity);
             isOnGround = canJump = false;
         }

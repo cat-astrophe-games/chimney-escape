@@ -9,10 +9,13 @@ public class AnimatorDisabler : MonoBehaviour
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
+        //m_Animator.StopPlayback();
     }
 
     public void DisableAnimator()
     {
-        m_Animator.enabled = false;
+        Debug.Log($"animation event");
+        //m_Animator.StopPlayback();
+        //m_Animator.enabled = false;
     }
 }
