@@ -71,8 +71,6 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         isOnGround = canJump = collision.transform.position.y < transform.position.y;
-        if (isOnGround)
-            Debug.Log("Landed");
     }
 
     private void OnCollisionStay(Collision collision)

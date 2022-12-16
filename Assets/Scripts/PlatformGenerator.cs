@@ -33,6 +33,7 @@ public class PlatformGenerator : MonoBehaviour
     }
 
     private float updateTimer;
+    private bool deathMarch;
     private void Update()
     {
         updateTimer += Time.deltaTime;
@@ -40,9 +41,11 @@ public class PlatformGenerator : MonoBehaviour
         {
             var playerHeight = player.GetMaxRoundedPlatformPosition();
             if (playerHeight > 4)
-                minimumHeight.SetValue(Mathf.Max(minimumHeight, (playerHeight - 2) * platformDistance));
+                minimumHeight.SetValue(Mathf.Max(minimumHeight, (playerHeight - 4) * platformDistance));
             while (playerHeight + 5 > platformsGenerated)
                 Generate();
+
+            updateTimer -= .25f;
         }
     }
 
@@ -71,6 +74,7 @@ public class PlatformGenerator : MonoBehaviour
                     break;
             }
         }
+        platform.transform.parent = platformParent;
         var platformControl = platform.GetComponent<Platform>();
         if(platformControl != null)
         {
@@ -112,7 +116,7 @@ public class PlatformGenerator : MonoBehaviour
                 {
                     var newOb = Instantiate(prefab, parent, false);
                     if (parent != null)
-                        newOb.transform.SetParent(parent);
+                        newOb.transform.parent = parent;
                     activePool.Add(newOb);
                     return newOb;
                 }
@@ -150,7 +154,9 @@ public class PlatformGenerator : MonoBehaviour
         {
             for(int i = 0; i < poolSize; i++)
             {
-                GameObject ob = Instantiate(prefab, parent, false);
+                GameObject ob = Instantiate(prefab, parent, true);
+                if (parent != null)
+                    ob.transform.parent = parent;
                 ob.SetActive(false);
                 freePool.Add(ob);
             }

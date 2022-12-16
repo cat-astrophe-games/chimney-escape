@@ -10,12 +10,12 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
-        startingHeight.SetValue(transform.position.y - playerTracking.position.y);
+        startingHeight.SetValue(transform.localPosition.y - playerTracking.position.y);
         minimumHeight.SetValue(minimumHeight.StartValue);
     }
 
     private void Update()
     {
-        transform.position = new Vector3(transform.position.x, Mathf.Max(minimumHeight + startingHeight, playerTracking.position.y + startingHeight), transform.position.z);
+        transform.localPosition = new Vector3(transform.localPosition.x, Mathf.Max(minimumHeight + startingHeight, playerTracking.position.y + startingHeight), transform.localPosition.z);
     }
 }
