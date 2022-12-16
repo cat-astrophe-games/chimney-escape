@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
-        if(player.GetCurrentPlatformPosition() * 3 < minimumHeight)
+        if(player.controlEnabled && player.GetCurrentPlatformPosition() * 3 < minimumHeight)
         {
             // trigger end of game
             player.controlEnabled = false;
