@@ -5,62 +5,95 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] 
-    private float maxHorizontalVelocity, minJumpVelocity, horizontalForce;
+    private float maxHorizontalVelocity, minJumpVelocity, acceleration, bounceBonus;
     
     [SerializeField] 
     private Rigidbody rb;
 
     [ReadOnly]
-    public bool isOnGround;
+    public bool isOnGround, canJump = true;
+
+    [SerializeField]
+    [ReadOnly]
+    private int maxPlatformReached;
+
+    [ReadOnly]
+    public bool controlEnabled = true;
 
     private void Start()
     {
         rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
     }
 
+    private void Update()
+    {
+        if(isOnGround)
+            maxPlatformReached = Mathf.Max(maxPlatformReached, Mathf.RoundToInt(transform.position.y / 3f));
+        if (rb.velocity.y > 0)
+            canJump = false;
+    }
+
+    public int GetMaxRoundedPlatformPosition() => maxPlatformReached;
+
+    public int GetCurrentPlatformPosition()
+    {
+        return Mathf.RoundToInt(transform.position.y / 3f);
+    }
+
     public void FixedUpdate()
     {
+        if (!controlEnabled) return;
         var horizontal = Input.GetAxis("Horizontal");
         var vertical = Input.GetAxis("Vertical");
         horizontal = horizontal > 0 ? 1 : horizontal < 0 ? -1 : 0;
+        var velocity = rb.velocity;
         if(horizontal != 0)
         {
-            var multi = Mathf.Sign(horizontal) != Mathf.Sign(rb.velocity.x) ? 2 : 1;
-            rb.AddForce(horizontalForce * horizontal * Time.fixedDeltaTime * multi, 0, 0);
+            var multi = Mathf.Sign(horizontal) != Mathf.Sign(velocity.x) ? 2 : 1;
+            var change = acceleration * horizontal * Time.fixedDeltaTime * multi;
+            if (!isOnGround)
+                change *= .75f;
+            velocity.x += change;
         }
         else if (isOnGround)
         {
-            var xSign = rb.velocity.x < 0 ? -1 : 1;
-            rb.AddForce(-xSign * horizontalForce * Time.fixedDeltaTime * Mathf.Abs(rb.velocity.x), 0, 0);
+            velocity.x *= 0.9f;
         }
-        if(vertical > 0 && isOnGround)
+        velocity.x = Mathf.Min(velocity.x, maxHorizontalVelocity);
+        if(vertical > 0 && isOnGround && velocity.y <= 0 && canJump)
         {
-            var velocity = rb.velocity;
             velocity.y = Mathf.Max(velocity.x, minJumpVelocity);
-            rb.velocity = velocity;
+            isOnGround = false;
         }
-        var velocityConstraint = rb.velocity;
-        velocityConstraint.x = Mathf.Min(velocityConstraint.x, maxHorizontalVelocity);
-        rb.velocity = velocityConstraint;
+        rb.velocity = velocity;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        isOnGround = collision.collider.transform.position.y < transform.position.y;
+        isOnGround = canJump = collision.transform.position.y < transform.position.y;
+        if (isOnGround)
+            Debug.Log("Landed");
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        isOnGround = canJump = collision.transform.position.y < transform.position.y;
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        isOnGround = false;
+        if(collision.transform.position.y < transform.position.y)
+            isOnGround = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("wall"))
         {
-            Debug.Log($"Swapping X velocity");
             var velocity = rb.velocity;
             velocity.x = -velocity.x;
+            velocity.x += Mathf.Sign(velocity.x) * bounceBonus;
+            velocity.y += bounceBonus;
             rb.velocity = velocity;
             return;
         }

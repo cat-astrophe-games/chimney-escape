@@ -11,6 +11,7 @@ public class CameraMovement : MonoBehaviour
     private void Start()
     {
         startingHeight.SetValue(transform.position.y - playerTracking.position.y);
+        minimumHeight.SetValue(minimumHeight.StartValue);
     }
 
     private void Update()
